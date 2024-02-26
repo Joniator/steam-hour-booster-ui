@@ -3,6 +3,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -22,14 +23,14 @@ var args struct {
 
 //go:embed static
 var static embed.FS
-var c *config.Config
+var configs *[]config.Config
 var dc docker.DockerClient
 
 func main() {
 	arg.MustParse(&args)
 	dc = docker.New(args.ContainerName)
 	var err error
-	c, err = config.LoadConfig(args.ConfigFilePath)
+	configs, err = config.LoadConfig(args.ConfigFilePath)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -45,7 +46,8 @@ func main() {
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/index.html")
-	g := games.FromConfig(c)
+	g := games.FromConfig(configs, w.Header().Get("shb-user"))
+
 
 	type Context struct {
 		Games             []games.Game
@@ -58,6 +60,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		IsDockerAvailable: dc.IsAvailable(),
 	}
 
+	w.Header().Add("Set-Cookie", fmt.Sprintf("user=%s", g.User))
 	err := t.Execute(w, context)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -73,8 +76,10 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Failed to parse appId %s", appId)
 	} else {
-		c.Add(parsedAppId)
-		c.Save(args.ConfigFilePath)
+		config.Add(configs, w.Header().Get("shb-user"), parsedAppId)
+		if err := config.Save(configs, args.ConfigFilePath); err != nil {
+			log.Print("Failed to save config")
+		}
 	}
 	http.Redirect(w, r, "/", 301)
 }
@@ -82,14 +87,14 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	appId := strings.TrimPrefix(r.URL.Path, "/delete/")
 	parsedAppId, err := strconv.Atoi(appId)
-	log.Printf("%+v", c)
+	log.Printf("%+v", configs)
 
 	if err != nil {
 		log.Printf("Failed to parse appId %s", appId)
 	} else {
-		c.Remove(parsedAppId)
+		config.Remove(configs, w.Header().Get("shb-user"), parsedAppId)
 
-		if err := c.Save(args.ConfigFilePath); err != nil {
+		if err := config.Save(configs, args.ConfigFilePath); err != nil {
 			log.Print("Failed to save config")
 		}
 	}
@@ -103,5 +108,4 @@ func startHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Docker not configured", 500)
 		return
 	}
-
 }

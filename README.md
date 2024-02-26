@@ -14,4 +14,6 @@ Usage:
 - Build the app: `make build`
 - Run the app: `make run`
 - Run and rebuild for css/template updates: `make watch`
+> [!NOTE]
+> `make watch` needs entr
 

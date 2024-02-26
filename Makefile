@@ -7,4 +7,9 @@ run:
 	go run main.go
 
 watch:
-	ls styles/*.css templates/*.html | entr -r make run
+	find -name "*.go" \
+			-or -name "*.css" \
+			-not -name "tailwind.css" \
+			-and -not -path "./node_modules/*" \
+		| entr -r make run
+

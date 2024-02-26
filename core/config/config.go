@@ -14,32 +14,37 @@ type Config struct {
 	AppIds   []int  `json:"games"`
 }
 
-func LoadConfig(path string) (*Config, error) {
+func LoadConfig(path string) (*[]Config, error) {
 	configFile, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 
-	config, _ := io.ReadAll(configFile)
+	configRaw, _ := io.ReadAll(configFile)
 	if err != nil {
 		return nil, err
 	}
 
-	var c Config
-	json.Unmarshal(config, &c)
-	log.Printf("Config loaded: %+v", c)
-	slices.Sort(c.AppIds)
+	var config []Config
+	err = json.Unmarshal(configRaw, &config)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("Config loaded: %+v", config)
+	for _, c := range config {
+		slices.Sort(c.AppIds)
+	}
 
-	return &c, nil
+	return &config, nil
 }
 
-func (c *Config) Save(path string) error {
+func Save(c *[]Config, path string) error {
 	configFile, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 
-	b, err := json.Marshal(c)
+	b, err := json.MarshalIndent(c, "", "    ")
 	if err != nil {
 		return err
 	}
@@ -52,7 +57,8 @@ func (c *Config) Save(path string) error {
 	return nil
 }
 
-func (c *Config) Add(appId int) {
+func Add(configs *[]Config, user string, appId int) {
+	c := GetUserConfig(configs, user)
 	for _, id := range c.AppIds {
 		if id == appId {
 			log.Printf("Game %d already in config", appId)
@@ -64,8 +70,9 @@ func (c *Config) Add(appId int) {
 	slices.Sort(c.AppIds)
 }
 
-func (c *Config) Remove(appId int) {
+func Remove(configs *[]Config, user string, appId int) {
 	log.Printf("Deleting %d from config", appId)
+	c := GetUserConfig(configs, user)
 	var ids []int
 	for _, id := range c.AppIds {
 		if id != appId {
@@ -73,4 +80,17 @@ func (c *Config) Remove(appId int) {
 		}
 	}
 	c.AppIds = ids
+}
+
+func GetUserConfig(configs *[]Config, user string) *Config {
+	first := &(*configs)[0]
+	if user == "" {
+		return first
+	}
+	for _, c := range *configs {
+		if c.Name == user {
+			return &c
+		}
+	}
+	return first
 }

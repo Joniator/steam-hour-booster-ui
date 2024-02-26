@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"steam-hour-booster-ui/core/config"
 )
@@ -20,7 +21,8 @@ type Library struct {
 
 var gameNamesCache = make(map[int]string)
 
-func FromConfig(c *config.Config) Library {
+func FromConfig(configs *[]config.Config, user string) Library {
+	c := config.GetUserConfig(configs, user)
 	var games []Game
 	for _, id := range c.AppIds {
 		name := getNameForAppId(id)
@@ -44,6 +46,7 @@ func getNameForAppId(appId int) string {
 
 	response, err := http.Get(fmt.Sprintf("http://store.steampowered.com/api/appdetails?appids=%d", appId))
 	if err != nil {
+		log.Printf("Failed to load from steam API: %v", err)
 		return "Unknown"
 	}
 
