@@ -1,6 +1,10 @@
+clean:
+	rm -rf build/
+	rm static/css/tailwind.css
+
 build:
 	go generate
-	go build
+	go build -o build/
 
 run: 
 	go generate
@@ -12,4 +16,7 @@ watch:
 			-not -name "tailwind.css" \
 			-and -not -path "./node_modules/*" \
 		| entr -r make run
+
+build-container:
+	docker build -t joniator/steam-hour-booster-ui:latest .
 

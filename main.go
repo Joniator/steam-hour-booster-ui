@@ -46,7 +46,9 @@ func main() {
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/index.html")
-	g := games.FromConfig(configs, w.Header().Get("shb-user"))
+	user := getUserFromCookie(r)
+	log.Print(user)
+	g := games.FromConfig(configs, user)
 
 
 	type Context struct {
@@ -60,7 +62,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		IsDockerAvailable: dc.IsAvailable(),
 	}
 
-	w.Header().Add("Set-Cookie", fmt.Sprintf("user=%s", g.User))
+	w.Header().Add("Set-Cookie", fmt.Sprintf("shb-user=%s", g.User))
 	err := t.Execute(w, context)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -76,7 +78,8 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Failed to parse appId %s", appId)
 	} else {
-		config.Add(configs, w.Header().Get("shb-user"), parsedAppId)
+		user := getUserFromCookie(r)
+		config.Add(configs, user, parsedAppId)
 		if err := config.Save(configs, args.ConfigFilePath); err != nil {
 			log.Print("Failed to save config")
 		}
@@ -92,7 +95,8 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Failed to parse appId %s", appId)
 	} else {
-		config.Remove(configs, w.Header().Get("shb-user"), parsedAppId)
+		user := getUserFromCookie(r)
+		config.Remove(configs, user, parsedAppId)
 
 		if err := config.Save(configs, args.ConfigFilePath); err != nil {
 			log.Print("Failed to save config")
@@ -103,9 +107,19 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
+func getUserFromCookie(r *http.Request) string {
+	userCookie, err := r.Cookie("shb-user")
+	if err != nil {
+		log.Printf("Failed to get username from request %v", err)
+		return ""
+	} 
+	return userCookie.Value
+}
+
 func startHandler(w http.ResponseWriter, r *http.Request) {
 	if !dc.IsAvailable() {
 		http.Error(w, "Docker not configured", 500)
 		return
 	}
 }
+

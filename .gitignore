@@ -1,6 +1,6 @@
 config.json
 static/css/tailwind.css
-steam-hout-booster-ui
+build/
 # Created by https://www.toptal.com/developers/gitignore/api/go,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,node
 
