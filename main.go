@@ -1,6 +1,8 @@
+//go:generate npm run build
 package main
 
 import (
+	"embed"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,6 +20,8 @@ var args struct {
 	ContainerName string `arg:"--container" help:"Name of the container"`
 }
 
+//go:embed static
+var static embed.FS
 var c *config.Config
 var dc docker.DockerClient
 
@@ -33,6 +37,7 @@ func main() {
 	http.HandleFunc("/delete/", deleteHandler)
 	http.HandleFunc("/add", addHandler)
 	http.HandleFunc("/", getIndex)
+	http.Handle("/static/", http.FileServer(http.FS(static)))
 
 	log.Print("Listening on port :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

@@ -3,51 +3,51 @@
   <head>
     <meta charset="UTF-8">
     <title>Steam Hour Booster</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/static/css/tailwind.css" rel="stylesheet">
     <!--script> setInterval(function(){location.reload()}, 5000); </script-->
   </head>
-  <body class="bg-violet-950 text-white">
-    <div class="flex items-center justify-center h-screen">
-      <div class="rounded-lg border bg-card w-full max-w-xl bg-violet-800" data-v0-t="card">
+  <body class="mocha">
+    <div class="bg-base flex items-center justify-center h-screen">
+      <div class="card shadow shadow-pink w-full max-w-xl" data-v0-t="card">
         <div class="flex flex-col space-y-1.5 p-6">
-          <h3 class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Configuration</h3>
-          <p class="text-sm text-muted-foreground">Edit played games for {{ .User }}</p>
+          <h3 class="heading">Configuration</h3>
+          <p class="text">Edit farmed games for {{ .User }}</p>
         </div>
         <div class="p-6">
           <div class="flex flex-col gap-4">
             <div>
               Games
-              <div class="border rounded-lg">
+              <div class="card">
                 {{ range .Games }}
-                <form action="delete/{{ .AppId }}" class="flex items-center justify-between rounded-lg bg-purple-600 px-8 m-2">
+                <form action="delete/{{ .AppId }}" class="list-entry">
                   <p>{{ .AppId }} ({{ .Name }})</p>
                   <button type="submit" 
-                          class="inline-flex items-center justify-center rounded-md text-sm h-8 m-2 px-4 py-2 bg-red-600">
+                          class="button button-delete">
                     Delete
                   </button>
                 </form>
                 {{ else }}
-                <div class="flex items-center justify-around rounded-lg bg-purple-600 p-4 m-2">No games???</div>
+                <div class="card-empty">No games???</div>
                 {{ end }}
               </div>
             </div>
             <div>
               Add Game
-              <div class="border rounded-lg">
-                <form action="add" method="POST" class="flex items-center justify-around rounded-lg bg-purple-600 m-2">
+              <div class="card">
+                <form action="add" method="POST" class="flex items-center justify-around 600 m-2">
                   <label for="AppId">AppId:</label>
-                  <input autofocus type="text" name="AppId" placeholder="33133" class="text-black" /> 
+                  <input autofocus type="text" name="AppId" placeholder="33133" class="textbox" /> 
                   <button type="submit"
-                  class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm h-8 m-2 px-4 py-2 bg-gray-200">Add Game</button>
+                  class="button">Add Game</button>
                 </form>
               </div>
             </div>
             <div>
               Docker
-              <div class="border rounded-lg">
+              <div class="card">
                 {{ if .IsDockerAvailable }}
                 {{ else }}
-                <p class="flex items-center justify-around rounded-lg bg-red-600 p-4 m-2">Docker is not installed</p>
+                <p class="flex items-center justify-around rounded-lg text-crust bg-red p-4 m-2">Docker is not installed</p>
                 {{ end }}
               </div>
             </div>
