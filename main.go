@@ -23,8 +23,9 @@ var args struct {
 
 //go:embed static
 var static embed.FS
+
 //go:embed templates
-var templates  embed.FS
+var templates embed.FS
 
 var configs *[]config.Config
 var dc docker.DockerClient
@@ -44,12 +45,12 @@ func main() {
 	http.HandleFunc("/", getIndex)
 	http.Handle("/static/", http.FileServer(http.FS(static)))
 
-	log.Print("Listening on port :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Print("Listening on port :35888")
+	log.Fatal(http.ListenAndServe(":35888", nil))
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFS(templates ,"templates/index.html")
+	t, _ := template.ParseFS(templates, "templates/index.html")
 	user := getUserFromCookie(r)
 	g := games.FromConfig(configs, user)
 
@@ -58,14 +59,14 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		User              string
 		IsDockerAvailable bool
 		DockerStatus      string
-		DockerLogs		  []string
+		DockerLogs        []string
 	}
 	context := Context{
 		Games:             g.Games,
 		User:              g.User,
 		IsDockerAvailable: dc.IsAvailable(),
 		DockerStatus:      dc.GetStatus(),
-		DockerLogs:		   dc.GetLogs(),
+		DockerLogs:        dc.GetLogs(),
 	}
 
 	w.Header().Add("Set-Cookie", fmt.Sprintf("shb-user=%s", g.User))
@@ -134,6 +135,13 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) {
 		switch r.Form.Get("action") {
 		case "restart":
 			dc.Restart()
+			break
+		case "start":
+			dc.Start()
+			break
+		case "stop":
+			dc.Stop()
+			break
 		}
 
 	}()
