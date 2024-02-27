@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine AS build
 
-RUN apk add build-base
+RUN apk add build-base nodejs
 
 WORKDIR /app
 COPY go.mod go.sum .
