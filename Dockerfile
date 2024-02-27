@@ -4,7 +4,7 @@ RUN apk add build-base npm
 WORKDIR /app
 
 # Setup early for caching
-COPY go.mod go.sum package.json package-lock.json.
+COPY Makefile go.mod go.sum package.json package-lock.json.
 RUN make setup
 
 COPY . /app
