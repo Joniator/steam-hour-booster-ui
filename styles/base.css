@@ -22,12 +22,20 @@
   @apply border bg-base text-text rounded-lg border-pink p-1
 }
 
+.status-box {
+  @apply flex items-center justify-center
+}
+
+.log-box{
+  @apply bg-black border-mauve m-4 p-2 rounded-lg text-green overflow-auto text-nowrap
+}
+
 .list-entry {
-  @apply px-8 m-2 flex items-center justify-between rounded-lg bg-surface0
+  @apply px-8 m-2 flex items-center justify-between rounded-lg bg-surface0 
 }
 
 .button {
-  @apply inline-flex items-center justify-center rounded-md h-8 m-2 px-4 py-2 bg-surface0
+  @apply inline-flex items-center justify-center rounded-md h-8 m-2 px-4 py-2 bg-surface0;
 }
 
 .button-delete {

@@ -65,13 +65,13 @@ func Add(configs *[]Config, user string, appId int) {
 			return
 		}
 	}
-	log.Printf("Adding %d to config", appId)
+	log.Printf("Adding %d to %s config", appId, user)
 	c.AppIds = append(c.AppIds, appId)
 	slices.Sort(c.AppIds)
 }
 
 func Remove(configs *[]Config, user string, appId int) {
-	log.Printf("Deleting %d from config", appId)
+	log.Printf("Deleting %d from %s config", appId, user)
 	c := GetUserConfig(configs, user)
 	var ids []int
 	for _, id := range c.AppIds {
@@ -83,13 +83,14 @@ func Remove(configs *[]Config, user string, appId int) {
 }
 
 func GetUserConfig(configs *[]Config, user string) *Config {
-	first := &(*configs)[0]
+	cfgs := (*configs)
+	first := &cfgs[0]
 	if user == "" {
 		return first
 	}
-	for _, c := range *configs {
-		if c.Name == user {
-			return &c
+	for index, _ := range *configs {
+		if cfgs[index].Name == user {
+			return &cfgs[index]
 		}
 	}
 	return first

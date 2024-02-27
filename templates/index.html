@@ -19,17 +19,20 @@
             <div>
               Games
               <div class="card">
-                {{ range .Games }}
-                <form action="delete/{{ .AppId }}" class="list-entry">
-                  <p>{{ .AppId }} ({{ .Name }})</p>
-                  <button type="submit" 
-                          class="button button-delete">
-                    Delete
-                  </button>
+                <form action="delete" >
+                  {{ range .Games }}
+                  <div class="list-entry">
+                    <p>{{ .AppId }} ({{ .Name }})</p>
+                    <button type="submit" 
+                      name="item" value="{{ .AppId }}"
+                      class="button button-delete">
+                      Delete
+                    </button>
+                  </div>
+                  {{ else }}
+                  <div class="card-empty">No games???</div>
+                  {{ end }}
                 </form>
-                {{ else }}
-                <div class="card-empty">No games???</div>
-                {{ end }}
               </div>
             </div>
             <div>
@@ -38,8 +41,7 @@
                 <form action="add" method="POST" class="flex items-center justify-around 600 m-2">
                   <label for="AppId">AppId:</label>
                   <input autofocus type="text" name="AppId" placeholder="33133" class="textbox" /> 
-                  <button type="submit"
-                  class="button">Add Game</button>
+                  <button type="submit" class="button">Add Game</button>
                 </form>
               </div>
             </div>
@@ -47,6 +49,21 @@
               Docker
               <div class="card">
                 {{ if .IsDockerAvailable }}
+                <div class="status-box">
+                  <p>Status: {{ .DockerStatus }} </p>
+                </div>
+                <form action="docker" method="POST" class="flex items-center justify-around 600 m-2">
+                  <button class="button" name="action" value="restart">Restart</button>
+                  <button class="button" name="action" value="start">Start</button>
+                  <button class="button" name="action" value="stop">Stop</button>
+                </form>
+                <div class="log-box">
+                  {{ range .DockerLogs }}
+                  <p>{{ . }}</p>
+                  {{ else }}
+                  <p>No logs???</p>
+                  {{ end }}
+                </div>
                 {{ else }}
                 <p class="flex items-center justify-around rounded-lg text-crust bg-red p-4 m-2">Docker is not installed</p>
                 {{ end }}
