@@ -2,6 +2,10 @@ clean:
 	rm -rf build/
 	rm static/css/tailwind.css
 
+setup:
+	npm install
+	go mod download
+
 build:
 	go generate
 	go build -o build/

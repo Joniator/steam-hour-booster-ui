@@ -11,6 +11,7 @@ Prerequisises:
 - Steam Hour Booster config file with a single user
 
 Usage:
+- Setup dependencies: `make setup'
 - Build the app: `make build`
 - Run the app: `make run`
 - Run and rebuild for css/template updates: `make watch`

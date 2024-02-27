@@ -3,9 +3,9 @@ FROM golang:1.21-alpine AS build
 RUN apk add build-base npm
 WORKDIR /app
 
-# Install go mods early for caching
-COPY go.mod go.sum .
-RUN go mod download
+# Setup early for caching
+COPY go.mod go.sum package.json package-lock.json.
+RUN make setup
 
 COPY . /app
 RUN make build
