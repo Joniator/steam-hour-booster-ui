@@ -17,6 +17,6 @@ watch:
 			-and -not -path "./node_modules/*" \
 		| entr -r make run
 
-build-container:
+build-image:
 	docker build -t joniator/steam-hour-booster-ui:latest .
 
