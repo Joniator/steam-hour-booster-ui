@@ -23,6 +23,9 @@ var args struct {
 
 //go:embed static
 var static embed.FS
+//go:embed templates
+var templates  embed.FS
+
 var configs *[]config.Config
 var dc docker.DockerClient
 
@@ -46,7 +49,7 @@ func main() {
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/index.html")
+	t, _ := template.ParseFS(templates ,"templates/index.html")
 	user := getUserFromCookie(r)
 	g := games.FromConfig(configs, user)
 
@@ -66,6 +69,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Set-Cookie", fmt.Sprintf("shb-user=%s", g.User))
+	log.Printf("Context: %=v", context)
 	err := t.Execute(w, context)
 	if err != nil {
 		http.Error(w, err.Error(), 500)

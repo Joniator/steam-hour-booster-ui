@@ -1,10 +1,11 @@
 package docker
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"log"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -48,18 +49,23 @@ func (dc DockerClient) GetStatus() string {
 }
 
 func (dc DockerClient) GetLogs() []string {
-	logs, err := dc.apiClient.ContainerLogs(context.Background(), dc.ContainerName, container.LogsOptions{Tail: "10", ShowStdout: true, ShowStderr: true})
+	logs, err := dc.apiClient.ContainerLogs(context.Background(), dc.ContainerName, container.LogsOptions{Tail: "10", ShowStdout: true, Details: false})
 	if err != nil {
 		return []string{"Failed to get logs", err.Error()}
 	}
 
-	raw, err := io.ReadAll(logs)
+	headerbytes := make([]byte, 8)
+	buf := new(bytes.Buffer)
+	buf.Read(headerbytes)
+	buf.ReadFrom(logs)
+	raw := buf.String()
 	if err != nil {
 		return []string{"Failed to get logs", err.Error()}
 	}
-
 	s := string(raw)
-	return strings.Split(s, "/n")
+	s = regexp.MustCompile("[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))").ReplaceAllString(s, "")
+	s = regexp.MustCompile(`[^a-zA-Z0-9\-\(\)\n\[\] ]+`).ReplaceAllString(s, "")
+	return strings.Split(s, "\n")
 }
 
 func (dc DockerClient) Start() error {

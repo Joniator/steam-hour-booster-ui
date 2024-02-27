@@ -57,6 +57,7 @@
                   <button class="button" name="action" value="start">Start</button>
                   <button class="button" name="action" value="stop">Stop</button>
                 </form>
+                {{/*
                 <div class="log-box">
                   {{ range .DockerLogs }}
                   <p>{{ . }}</p>
@@ -64,6 +65,7 @@
                   <p>No logs???</p>
                   {{ end }}
                 </div>
+                */}}
                 {{ else }}
                 <p class="flex items-center justify-around rounded-lg text-crust bg-red p-4 m-2">Docker is not installed</p>
                 {{ end }}
