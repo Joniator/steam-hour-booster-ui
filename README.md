@@ -7,13 +7,13 @@ It is a UI for the config.json with basic container controls to restart, it does
 
 ## Roadmap
 
-[x] Add and remove boosted games by AppIDs
-[x] Show the names of the boosted games
-[x] Restart/Manage the container from web UI
-[ ] Add games by name with included search
-[ ] Show human readable logs of the container
-[ ] Disable boosted games without deleting them/remember previous games
-[ ] Track current boosted games, not just games in the config
+- [x] Add and remove boosted games by AppIDs
+- [x] Show the names of the boosted games
+- [x] Restart/Manage the container from web UI
+- [ ] Add games by name with included search
+- [ ] Show human readable logs of the container
+- [ ] Disable boosted games without deleting them/remember previous games
+- [ ] Track current boosted games, not just games in the config
 
 ## Usage
 
