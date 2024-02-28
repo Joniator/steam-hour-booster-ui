@@ -3,7 +3,7 @@
 This is a web UI for [DrWarpMan's Steam Hour Booster](https://github.com/DrWarpMan/steam-hour-booster)
 It is a UI for the config.json with basic container controls to restart, it does not interact with the booster itself.
 
-![Screenshot of the app](https://github.com/Joniator/steam-hour-booster-ui/tree/main/.github/screenshot.png)
+![Screenshot of the app](https://raw.githubusercontent.com/Joniator/steam-hour-booster-ui/main/.github/screenshot.png)
 
 ## Roadmap
 
