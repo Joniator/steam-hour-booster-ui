@@ -11,6 +11,7 @@ It is a UI for the config.json with basic container controls to restart, it does
 - [x] Show the names of the boosted games
 - [x] Restart/Manage the container from web UI
 - [ ] Add games by name with included search
+- [ ] Add proper multi user support
 - [ ] Show human readable logs of the container
 - [ ] Disable boosted games without deleting them/remember previous games
 - [ ] Track current boosted games, not just games in the config
@@ -23,6 +24,10 @@ The container does not get restartet on config changes automatically.
 The `latest` Tag points to the latest release, edge gets rebuilt on main pushes and might be in a broken state.
 
 To run it standalone: `steam-hour-booster-ui --config ./config.json --container steam_hour_booster`
+
+### Muti-User support
+
+The backend can handle multi user, to change the displayed user, set the cookie shb-user to the username from your config. This defaults to the first user in the config
 
 ## Development
 
