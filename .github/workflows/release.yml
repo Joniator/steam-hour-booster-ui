@@ -7,6 +7,11 @@ name: Handle Release
 
 jobs:
   generate:
+    name: Create release-artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     strategy: 
       matrix:
         target: 
@@ -19,8 +24,6 @@ jobs:
           - goos: linux
             goarch: arm
 
-    name: Create release-artifacts
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@master
