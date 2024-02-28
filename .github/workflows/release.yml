@@ -34,9 +34,11 @@ jobs:
         run: |
           make setup
           make build
-             
-      - name: Archive build output
-        uses: actions/upload-artifact@v4
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: build
-          path: build/* 
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          file: build/*
+          file_glob: true
+          overwrite: true
