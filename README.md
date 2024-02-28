@@ -18,8 +18,8 @@ It is a UI for the config.json with basic container controls to restart, it does
 
 ## Usage
 
-See the docker-compose.yml as a working example.
-Configuring the docker container is optional, but recommended to reload the booster if the config changes.
+See the [docker-compose.yml](https://github.com/Joniator/steam-hour-booster-ui/blob/main/docker-compose.yml) for a working example.
+Configuring the docker container name is optional, but recommended to reload the booster if the config changes.
 The container does not get restartet on config changes automatically.
 The `latest` Tag points to the latest release, edge gets rebuilt on main pushes and might be in a broken state.
 
