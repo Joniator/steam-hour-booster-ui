@@ -1,5 +1,5 @@
 on:
-  manual:
+  workflow_dispatch:
   release:
     types: [created]
 
