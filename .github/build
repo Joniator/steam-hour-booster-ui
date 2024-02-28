@@ -1,4 +1,0 @@
-#! /bin/env sh
-
-make setup
-make build

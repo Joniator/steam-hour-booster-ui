@@ -1,20 +1,36 @@
 on:
+  manual:
   release:
     types: [created]
+
 name: Handle Release
 
 jobs:
   generate:
+    strategy: 
+      matrix:
+        target: 
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: 386
+          - goos: linux
+            goarch: arm64
+          - goos: linux
+            goarch: arm
+
     name: Create release-artifacts
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@master
-      - name: Generate the artifacts
-        uses: skx/github-action-build@master
-      - name: Upload the artifacts
-        uses: skx/github-action-publish-binaries@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: 
+          - make setup
+          - GOOS=${{ matrix.target.goos }} GOARCH=${{ matrix.target.goarch }} make build
+             
+      - name: Archive build output
+        uses: actions/upload-artifact@v4
         with:
-          args: 'build/*'
+          name: build
+          path: build/* 
