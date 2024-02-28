@@ -1,0 +1,24 @@
+services:
+  steam_hour_booster:
+    image: drwarpman/steam-hour-booster:latest
+    container_name: steam_hour_booster
+    restart: unless-stopped
+    volumes:
+      - ./config.json:/app/config.json
+      - steam-data:/app/steam-data
+      - tokens:/app/tokens
+    stdin_open: true
+    tty: true
+
+  steam_hour_booster_ui:
+    image: joniator/steam-hour-booster-ui:latest
+    restart: unless-stopped
+    ports:
+      - 35888:35888
+    volumes:
+      - ./config.json:/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  steam-data:
+  tokens:

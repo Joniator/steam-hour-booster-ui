@@ -23,7 +23,7 @@
 }
 
 .status-box {
-  @apply flex items-center justify-center
+  @apply flex flex-col items-center justify-around
 }
 
 .log-box{

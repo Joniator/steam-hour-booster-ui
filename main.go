@@ -18,7 +18,7 @@ import (
 
 var args struct {
 	ConfigFilePath string `arg:"--config,-c" help:"Path to the config file" default:"config.json"`
-	ContainerName  string `arg:"--container" help:"Name of the container" default:"booster"`
+	ContainerName  string `arg:"--container" help:"Name of the container" default:"steam_hour_booster"`
 }
 
 //go:embed static
@@ -58,6 +58,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		Games             []games.Game
 		User              string
 		IsDockerAvailable bool
+		DockerName		  string
 		DockerStatus      string
 		DockerLogs        []string
 	}
@@ -65,6 +66,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		Games:             g.Games,
 		User:              g.User,
 		IsDockerAvailable: dc.IsAvailable(),
+		DockerName:		   dc.ContainerName,
 		DockerStatus:      dc.GetStatus(),
 		DockerLogs:        dc.GetLogs(),
 	}

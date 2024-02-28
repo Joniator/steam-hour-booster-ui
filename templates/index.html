@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title>Steam Hour Booster</title>
-    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/fluency/48/000000/steam.png">
     <link href="/static/css/tailwind.css" rel="stylesheet">
     <!--script> setInterval(function(){location.reload()}, 5000); </script-->
   </head>
@@ -50,6 +50,7 @@
               <div class="card">
                 {{ if .IsDockerAvailable }}
                 <div class="status-box">
+                  <p>Container name: {{ .DockerName }} </p>
                   <p>Status: {{ .DockerStatus }} </p>
                 </div>
                 <form action="docker" method="POST" class="flex items-center justify-around 600 m-2">
