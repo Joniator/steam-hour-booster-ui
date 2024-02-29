@@ -10,6 +10,7 @@ It is a UI for the config.json with basic container controls to restart, it does
 - [x] Add and remove boosted games by AppIDs
 - [x] Show the names of the boosted games
 - [x] Restart/Manage the container from web UI
+- [x] Password auth (Basic)
 - [ ] Add games by name with included search
 - [ ] Add proper multi user support
 - [ ] Show human readable logs of the container

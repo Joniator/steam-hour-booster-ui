@@ -16,7 +16,7 @@ ci-build:
 
 run: 
 	go generate
-	go run main.go
+	go run main.go -u test -p test
 
 watch:
 	find -name "*.go" \

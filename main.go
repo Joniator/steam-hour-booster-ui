@@ -3,6 +3,8 @@ package main
 
 import (
 	"embed"
+	"encoding/base64"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -19,6 +21,8 @@ import (
 var args struct {
 	ConfigFilePath string `arg:"--config,-c" help:"Path to the config file" default:"config.json"`
 	ContainerName  string `arg:"--container" help:"Name of the container" default:"steam_hour_booster"`
+	Username	   string `arg:"--user,-u" help:"Username for basic auth`
+	Password	   string `arg:"--password,-p" help:"Password for basic auth`
 }
 
 //go:embed static
@@ -49,7 +53,48 @@ func main() {
 	log.Fatal(http.ListenAndServe(":35888", nil))
 }
 
+func getUserFromCookie(r *http.Request) string {
+	userCookie, err := r.Cookie("shb-user")
+	if err != nil {
+		log.Printf("Failed to get username from request %v", err)
+		return ""
+	}
+	return userCookie.Value
+}
+
+func isAuthorized(w http.ResponseWriter, r *http.Request) bool {
+	if args.Username != "" && args.Password != "" {
+		authHeader := r.Header.Get("Authorization")
+		providedCredentials := strings.Trim(authHeader, "Basic ")
+
+		username, password, err := func () (string, string, error) {
+			cred, err := base64.StdEncoding.DecodeString(providedCredentials)
+			if err != nil {
+				return "", "", err
+			}
+
+			authSplit := strings.SplitN(string(cred), ":", 2)
+			if len(authSplit) != 2 {
+				return "", "", errors.New("Split failed")
+			}
+			return authSplit[0], authSplit[1], nil
+		}()
+
+
+		if err != nil || args.Username != username || args.Password != password {
+			log.Printf("Unauthorized: %s", providedCredentials)
+			w.Header().Add("WWW-Authenticate", "Basic")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return false
+		}
+	}
+	return true
+}
+
 func getIndex(w http.ResponseWriter, r *http.Request) {
+    if !isAuthorized(w, r) {
+		return
+	}
 	t, _ := template.ParseFS(templates, "templates/index.html")
 	user := getUserFromCookie(r)
 	g := games.FromConfig(configs, user)
@@ -58,7 +103,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		Games             []games.Game
 		User              string
 		IsDockerAvailable bool
-		DockerName		  string
+		DockerName        string
 		DockerStatus      string
 		DockerLogs        []string
 	}
@@ -66,7 +111,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		Games:             g.Games,
 		User:              g.User,
 		IsDockerAvailable: dc.IsAvailable(),
-		DockerName:		   dc.ContainerName,
+		DockerName:        dc.ContainerName,
 		DockerStatus:      dc.GetStatus(),
 		DockerLogs:        dc.GetLogs(),
 	}
@@ -81,6 +126,9 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
+    if !isAuthorized(w, r) {
+		return
+	}
 	func() {
 		err := r.ParseForm()
 		if err != nil {
@@ -105,6 +153,9 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {
+    if !isAuthorized(w, r) {
+		return
+	}
 	func() {
 		err := r.ParseForm()
 		if err != nil {
@@ -131,6 +182,9 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dockerHandler(w http.ResponseWriter, r *http.Request) {
+    if !isAuthorized(w, r) {
+		return
+	}
 	func() {
 		r.ParseForm()
 
@@ -152,16 +206,10 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
-func getUserFromCookie(r *http.Request) string {
-	userCookie, err := r.Cookie("shb-user")
-	if err != nil {
-		log.Printf("Failed to get username from request %v", err)
-		return ""
-	}
-	return userCookie.Value
-}
-
 func startHandler(w http.ResponseWriter, r *http.Request) {
+    if !isAuthorized(w, r) {
+		return
+	}
 	if !dc.IsAvailable() {
 		http.Error(w, "Docker not configured", 500)
 		return
