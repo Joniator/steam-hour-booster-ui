@@ -1,4 +1,3 @@
-//go:generate npm run build
 package main
 
 import (
@@ -12,6 +11,7 @@ import (
 	"steam-hour-booster-ui/core/config"
 	"steam-hour-booster-ui/core/docker"
 	"steam-hour-booster-ui/core/games"
+	"steam-hour-booster-ui/web"
 	"strconv"
 	"strings"
 
@@ -21,20 +21,20 @@ import (
 var args struct {
 	ConfigFilePath string `arg:"--config,-c" help:"Path to the config file" default:"config.json"`
 	ContainerName  string `arg:"--container" help:"Name of the container" default:"steam_hour_booster"`
-	Username	   string `arg:"--user,-u" help:"Username for basic auth`
-	Password	   string `arg:"--password,-p" help:"Password for basic auth`
+	Username       string `arg:"--user,-u" help:"Username for basic auth`
+	Password       string `arg:"--password,-p" help:"Password for basic auth`
 }
 
-//go:embed static
 var static embed.FS
 
-//go:embed templates
 var templates embed.FS
 
 var configs *[]config.Config
 var dc docker.DockerClient
 
 func main() {
+	static = web.Static
+	templates = web.Templates
 	arg.MustParse(&args)
 	dc = docker.New(args.ContainerName)
 	var err error
@@ -67,7 +67,7 @@ func isAuthorized(w http.ResponseWriter, r *http.Request) bool {
 		authHeader := r.Header.Get("Authorization")
 		providedCredentials := strings.Trim(authHeader, "Basic ")
 
-		username, password, err := func () (string, string, error) {
+		username, password, err := func() (string, string, error) {
 			cred, err := base64.StdEncoding.DecodeString(providedCredentials)
 			if err != nil {
 				return "", "", err
@@ -80,7 +80,6 @@ func isAuthorized(w http.ResponseWriter, r *http.Request) bool {
 			return authSplit[0], authSplit[1], nil
 		}()
 
-
 		if err != nil || args.Username != username || args.Password != password {
 			log.Printf("Unauthorized: %s", providedCredentials)
 			w.Header().Add("WWW-Authenticate", "Basic")
@@ -92,7 +91,7 @@ func isAuthorized(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
-    if !isAuthorized(w, r) {
+	if !isAuthorized(w, r) {
 		return
 	}
 	t, _ := template.ParseFS(templates, "templates/index.html")
@@ -126,7 +125,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
-    if !isAuthorized(w, r) {
+	if !isAuthorized(w, r) {
 		return
 	}
 	func() {
@@ -153,7 +152,7 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {
-    if !isAuthorized(w, r) {
+	if !isAuthorized(w, r) {
 		return
 	}
 	func() {
@@ -182,7 +181,7 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dockerHandler(w http.ResponseWriter, r *http.Request) {
-    if !isAuthorized(w, r) {
+	if !isAuthorized(w, r) {
 		return
 	}
 	func() {
@@ -207,7 +206,7 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func startHandler(w http.ResponseWriter, r *http.Request) {
-    if !isAuthorized(w, r) {
+	if !isAuthorized(w, r) {
 		return
 	}
 	if !dc.IsAvailable() {

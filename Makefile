@@ -1,13 +1,13 @@
 clean:
 	rm -rf build/
-	rm static/css/tailwind.css
+	rm web/static/css/tailwind.css
 
 setup:
-	npm install
+	npm install --prefix ./web
 	go mod download
 
 build:
-	go generate
+	go generate ./web
 	go build -o build/
 
 ci-build:
@@ -15,14 +15,14 @@ ci-build:
 	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/steam-hour-booster-ui-$(GOOS)-$(GOARCH)
 
 run: 
-	go generate
-	go run main.go -u test -p test
+	go generate ./web
+	go run ./cmd/steam-hour-booster-ui/main.go -u test -p test
 
 watch:
 	find -name "*.go" \
 			-or -name "*.css" \
 			-not -name "tailwind.css" \
-			-and -not -path "./node_modules/*" \
+			-and -not -path "*/node_modules/*" \
 	| entr -r make run
 
 build-image:
