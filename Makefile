@@ -16,7 +16,7 @@ ci-build:
 
 run: 
 	go generate ./web
-	go run ./cmd/steam-hour-booster-ui/main.go -u test -p test
+	go run ./cmd/steam-hour-booster-ui/main.go -u test -p test -P 8123
 
 watch:
 	find -name "*.go" \

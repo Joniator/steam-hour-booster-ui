@@ -1,0 +1,20 @@
+[
+    {
+        "username": "User1",
+        "password": "dontdeltemepls",
+        "games": [
+            123,
+            512,
+            1337
+        ]
+    },
+    {
+        "username": "User2",
+        "password": "dntdeleteaswell",
+        "games": [
+            123,
+            321,
+            1024
+        ]
+    }
+]

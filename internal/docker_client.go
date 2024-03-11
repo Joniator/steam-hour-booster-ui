@@ -1,4 +1,4 @@
-package docker
+package internal
 
 import (
 	"bytes"
@@ -18,14 +18,14 @@ type DockerClient struct {
 	ContainerName string
 }
 
-func New(containerName string) DockerClient {
+func NewDockerClient(containerName string) *DockerClient {
 	client, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		log.Printf("Failed to initialize docker: %v", err)
 	}
 	client.NegotiateAPIVersion(context.Background())
 
-	return DockerClient{
+	return &DockerClient{
 		apiClient:     client,
 		ContainerName: containerName,
 	}
