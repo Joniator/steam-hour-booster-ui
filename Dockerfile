@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Setup early for caching
 COPY Makefile go.mod go.sum .
-COPY web/package.json web/package-lock.json ./web
+COPY web/package.json web/package-lock.json ./web/
 RUN make setup
 
 COPY . /app

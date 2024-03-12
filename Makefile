@@ -8,15 +8,15 @@ setup:
 
 build:
 	go generate ./web
-	go build -o build/
+	go build -o build/ cmd/main.go
 
 ci-build:
-	go generate
-	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/steam-hour-booster-ui-$(GOOS)-$(GOARCH)
+	go generate ./web
+	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/steam-hour-booster-ui-$(GOOS)-$(GOARCH) cmd/main.go
 
 run: 
 	go generate ./web
-	go run ./cmd/steam-hour-booster-ui/main.go -u test -p test -P 8123
+	go run ./cmd/main.go -u test -p test -P 8123
 
 watch:
 	find -name "*.go" \
@@ -27,4 +27,3 @@ watch:
 
 build-image:
 	docker build -t joniator/steam-hour-booster-ui:latest .
-
