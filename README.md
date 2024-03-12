@@ -11,8 +11,8 @@ It is a UI for the config.json with basic container controls to restart, it does
 - [x] Show the names of the boosted games
 - [x] Restart/Manage the container from web UI
 - [x] Password auth (Basic)
+- [x] Add proper multi user support
 - [ ] Add games by name with included search
-- [ ] Add proper multi user support
 - [ ] Show human readable logs of the container
 - [ ] Disable boosted games without deleting them/remember previous games
 - [ ] Track current boosted games, not just games in the config
@@ -28,7 +28,7 @@ To run it standalone: `steam-hour-booster-ui --config ./config.json --container 
 
 ### Muti-User support
 
-The backend can handle multi user, to change the displayed user, set the cookie shb-user to the username from your config. This defaults to the first user in the config
+Multiple users are supported, if they are present in the config file. There currently is no per user auth, and no way to create/delete users.
 
 ## Development
 

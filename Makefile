@@ -1,6 +1,6 @@
 clean:
 	rm -rf build/
-	rm web/static/css/tailwind.css
+	rm -rf web/static/dist
 	rm -rf web/node_modules
 
 setup:
@@ -21,6 +21,7 @@ run:
 
 watch:
 	find -name "*.go" \
+			-or -name "*.html" \
 			-or -name "*.css" \
 			-not -name "tailwind.css" \
 			-and -not -path "*/node_modules/*" \

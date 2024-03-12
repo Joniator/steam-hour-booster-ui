@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"steam-hour-booster-ui/internal"
-	"steam-hour-booster-ui/web"
 
+	"github.com/Joniator/steam-hour-booster-ui/internal"
+	"github.com/Joniator/steam-hour-booster-ui/web"
 	"github.com/alexflint/go-arg"
 )
 

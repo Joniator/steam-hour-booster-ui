@@ -8,10 +8,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"steam-hour-booster-ui/internal"
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/Joniator/steam-hour-booster-ui/internal"
 )
 
 //go:embed static
@@ -37,6 +38,7 @@ func CreateWebServer(boosterConfig *internal.BoosterConfig, dockerClient *intern
 func (webServer *WebServer) Serve(port int) {
 	http.HandleFunc("/delete/", webServer.deleteHandler)
 	http.HandleFunc("/add", webServer.addHandler)
+	http.HandleFunc("/setUser", webServer.setUserHandler)
 	http.HandleFunc("/docker", webServer.dockerHandler)
 	http.HandleFunc("/", webServer.getIndex)
 	http.Handle("/static/", http.FileServer(http.FS(static)))
@@ -49,9 +51,12 @@ func (webServer *WebServer) getUserFromCookie(r *http.Request) string {
 	userCookie, err := r.Cookie("shb-user")
 	if err != nil {
 		log.Printf("Failed to get username from request %v", err)
-		return webServer.boosterConfig.GetDefaultUser()
+	} else if !webServer.boosterConfig.UserExists(userCookie.Value) {
+		log.Printf("User %s does not exist", userCookie.Value)
+	} else {
+		return userCookie.Value
 	}
-	return userCookie.Value
+	return webServer.boosterConfig.GetDefaultUser()
 }
 
 func (webServer *WebServer) isAuthorized(w http.ResponseWriter, r *http.Request) bool {
@@ -91,6 +96,7 @@ func (webServer *WebServer) getIndex(w http.ResponseWriter, r *http.Request) {
 	library, err := webServer.boosterConfig.ResolveSteamLibrary(user)
 
 	type Context struct {
+		Users             []string
 		Games             []internal.Game
 		User              string
 		IsDockerAvailable bool
@@ -99,6 +105,7 @@ func (webServer *WebServer) getIndex(w http.ResponseWriter, r *http.Request) {
 		DockerLogs        []string
 	}
 	context := Context{
+		Users:             []string{"joniator", "meludoge"},
 		Games:             library.Games,
 		User:              library.User,
 		IsDockerAvailable: webServer.dockerClient.IsAvailable(),
@@ -108,12 +115,28 @@ func (webServer *WebServer) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Set-Cookie", fmt.Sprintf("shb-user=%s", user))
-	log.Printf("Context: %v", context)
 	err = t.Execute(w, context)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		log.Panic(err)
 	}
+}
+
+func (webServer *WebServer) setUserHandler(w http.ResponseWriter, r *http.Request) {
+	if !webServer.isAuthorized(w, r) {
+		return
+	}
+
+	func() {
+		err := r.ParseForm()
+		if err != nil {
+			log.Printf("Failed to parse form: %v", err)
+			return
+		}
+		user := r.Form.Get("users")
+		w.Header().Add("Set-Cookie", fmt.Sprintf("shb-user=%s", user))
+	}()
+	http.Redirect(w, r, "/", 301)
 }
 
 func (webServer *WebServer) addHandler(w http.ResponseWriter, r *http.Request) {

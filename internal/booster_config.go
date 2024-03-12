@@ -68,6 +68,11 @@ func (boosterConfig *BoosterConfig) GetDefaultUser() string {
 	return boosterConfig.UserConfigs[0].Name
 }
 
+func (boosterConfig *BoosterConfig) UserExists(user string) bool {
+	_, err := boosterConfig.GetUserConfig(user)
+	return err == nil
+}
+
 func (boosterConfig *BoosterConfig) GetUserConfig(user string) (*UserConfig, error) {
 	userConfigs := boosterConfig.UserConfigs
 	for index, _ := range userConfigs {

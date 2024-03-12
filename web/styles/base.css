@@ -41,3 +41,11 @@
 .button-delete {
    @apply bg-red text-crust
 }
+
+select {
+  @apply bg-crust text-text border p-1 rounded-lg border-pink
+}
+
+option {
+  @apply bg-base text-text
+}

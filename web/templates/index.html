@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Steam Hour Booster</title>
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/fluency/48/000000/steam.png">
-    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <link href="/static/dist/css/tailwind.css" rel="stylesheet">
     <!--script> setInterval(function(){location.reload()}, 5000); </script-->
   </head>
   <body class="mocha">
@@ -12,7 +12,15 @@
       <div class="card shadow shadow-pink w-full max-w-xl" data-v0-t="card">
         <div class="flex flex-col space-y-1.5 p-6">
           <h3 class="heading">Configuration</h3>
-          <p class="text">Edit farmed games for {{ .User }}</p>
+          <form action="setUser" name="UserForm" id="UserForm">
+            <label class="text" for="users">Edit farmed games for </label>
+            <select name="users" onchange="UserForm.submit()" id="users">
+              {{ $user := .User }}
+              {{ range .Users }}
+              <option class="text" value="{{ . }}" {{ if eq . $user }}selected{{end}}>{{ . }}</option>
+              {{ end }}
+            </select>
+          </form>
         </div>
         <div class="p-6">
           <div class="flex flex-col gap-4">

@@ -1,4 +1,4 @@
-module steam-hour-booster-ui
+module github.com/Joniator/steam-hour-booster-ui
 
 go 1.21.1
 

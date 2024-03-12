@@ -4,8 +4,8 @@
   "description": "",
   "main": "tailwind.config.js",
   "scripts": {
-    "build": "tailwindcss build -i styles/* -o static/css/tailwind.css",
-    "watch": "tailwindcss build -i styles/* -o static/css/tailwind.css --watch"
+    "build": "tailwindcss build -i styles/* -o static/dist/css/tailwind.css",
+    "watch": "tailwindcss build -i styles/* -o static/dist/css/tailwind.css --watch"
   },
   "author": "",
   "license": "ISC",
