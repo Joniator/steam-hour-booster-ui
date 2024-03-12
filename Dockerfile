@@ -1,11 +1,11 @@
-# syntax=docker/dockerfile:1.7-labs
 FROM golang:1.21-alpine AS build
 
 RUN apk add build-base npm
 WORKDIR /app
 
 # Setup early for caching
-COPY --parents Makefile go.mod go.sum web/package.json web/package-lock.json .
+COPY Makefile go.mod go.sum .
+COPY web/package.json web/package-lock.json ./web
 RUN make setup
 
 COPY . /app
