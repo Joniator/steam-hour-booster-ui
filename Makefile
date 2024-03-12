@@ -15,6 +15,9 @@ ci-build:
 	go generate ./web
 	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/steam-hour-booster-ui-$(GOOS)-$(GOARCH) cmd/main.go
 
+test:
+	go test ./internal
+
 run: 
 	go generate ./web
 	go run ./cmd/main.go -u test -p test -P 8123

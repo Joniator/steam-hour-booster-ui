@@ -43,8 +43,9 @@ func (webServer *WebServer) Serve(port int) {
 	http.HandleFunc("/", webServer.getIndex)
 	http.Handle("/static/", http.FileServer(http.FS(static)))
 
-	log.Printf("Listening on port %d", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
+	p := fmt.Sprintf(":%d", port)
+	log.Printf("Listening on %s", p)
+	log.Fatal(http.ListenAndServe(p, nil))
 }
 
 func (webServer *WebServer) getUserFromCookie(r *http.Request) string {
@@ -161,7 +162,6 @@ func (webServer *WebServer) addHandler(w http.ResponseWriter, r *http.Request) {
 		if err := webServer.boosterConfig.Save(); err != nil {
 			log.Print("Failed to save config")
 		}
-
 	}()
 	http.Redirect(w, r, "/", 301)
 }
