@@ -1,6 +1,7 @@
 clean:
 	rm -rf build/
 	rm web/static/css/tailwind.css
+	rm -rf web/node_modules
 
 setup:
 	npm install --prefix ./web
@@ -8,7 +9,7 @@ setup:
 
 build:
 	go generate ./web
-	go build -o build/ cmd/main.go
+	go build -o build/steam-hour-booster-ui cmd/main.go
 
 ci-build:
 	go generate ./web
