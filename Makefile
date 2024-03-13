@@ -2,6 +2,7 @@ clean:
 	rm -rf build/
 	rm -rf web/static/dist
 	rm -rf web/node_modules
+	rm -rf internal/testdata/working*
 
 setup:
 	npm install --prefix ./web

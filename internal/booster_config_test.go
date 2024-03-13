@@ -13,6 +13,8 @@ func TestConfig(t *testing.T) {
 		t.Fatalf("Failed to setup test: %s", err.Error())
 	}
 	destFile, err := os.Create("testdata/working_config.json")
+	defer os.Remove("testdata/working_config.json")
+
 	if err != nil {
 		t.Fatalf("Failed to setup test: %s", err.Error())
 	}
@@ -86,5 +88,4 @@ func TestConfig(t *testing.T) {
 			break
 		}
 	}
-
 }

@@ -1,4 +1,4 @@
-config.json
+working_config.json
 build/
 # Created by https://www.toptal.com/developers/gitignore/api/go,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,node
