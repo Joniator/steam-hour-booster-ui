@@ -7,6 +7,19 @@ on:
     tags: [ "**" ]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v5
+      with:
+        go-version: '^1.21.1' # The Go version to download (if necessary) and use.
+    - name: Run test
+      run: |
+          make setup
+          make test
+
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -15,14 +28,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-go@v5
-      with:
-        go-version: '^1.21.1' # The Go version to download (if necessary) and use.
-    - name: Test
-      run: |
-          make setup
-          make test
-
     - name: Log in to Docker Hub
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
       with:
